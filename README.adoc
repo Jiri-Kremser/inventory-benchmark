@@ -2,22 +2,28 @@
 
 == Titan + C* poc
 
+image:https://travis-ci.org/rhq-project/wildfly-monitor.svg?branch=master["Build Status", link="https://travis-ci.org/rhq-project/wildfly-monitor"]
+
+
 Here are some results I measured on my laptop:
 
 
 === Tree
 
 Creating a tree-like graph with 10k nodes and with exponential degree distribution:
+
 * 3926ms
 * 4230ms
 * 4771ms
 
 Sequentially going through all nodes and fetching the out going edges:
+
 * 1597ms
 * 2212ms
 * 2841ms
 
 Looking up one particuar node among 10k nodes without any index:
+
 * 1324ms
 * 2119ms
 * 2633ms
@@ -26,13 +32,16 @@ Looking up one particuar node among 10k nodes without any index:
 === Random Graph (DAG)
 
 Creating the graph (10k nodes, probability of forming and edge = 0.00184):
+
 * 6574ms
 * 6257ms
 
 Sequentially going through all nodes and fetching the out going edges:
+
 * 2798ms
 * 3535ms
 
 Deleting the graph:
+
 * 36974ms
 * 36632ms
