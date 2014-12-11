@@ -10,6 +10,7 @@ public class Main {
         System.out.println("Choose the demo:");
         System.out.println("1     SimpleGraphDemo - creating simple graph, saving it to C*, printing all the vertices and outgoing edges, deleting the graph");
         System.out.println("2     RandomGraphDemo - creating random graph (Erdős–Rényi model) with 10 000 vertices");
+        System.out.println("3     RandomTreeDemo  - creating random tree with 10 000 vertices, the sooner the node is created, the more children it has");
         System.out.println("---------------");
         System.out.print("Your option: ");
 

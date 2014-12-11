@@ -39,6 +39,7 @@ public class RandomGraphDemo {
 
     public void run(String[] args, boolean remove) {
         long initPhaseDuration = -1, queryPhase1Duration = -1, queryPhase2Duration = -1, deletingDuration = -1;
+        boolean runPhase1 = false; // it produces tons of lines of output in stdout
 
         int verticesNumber = 10000;
         float edgeProbability = (float) (2.0f*Math.log(verticesNumber)/(float)verticesNumber);
@@ -79,17 +80,21 @@ public class RandomGraphDemo {
             System.out.println("Initialization took " + initPhaseDuration + "ms");
         }
 
-        // QUERY 1
-        long start = System.currentTimeMillis();
-        Iterable<Vertex> vertices = graph.getVertices();
-        vertices.forEach((vertex) -> {
-            System.out.println("\nNode " + vertex.getProperty("name"));
-            Iterable<Edge> edges = vertex.getEdges(Direction.OUT);
-            System.out.println("out edges:");
-            edges.forEach((edge) -> System.out.println("--" + edge.getLabel() + "--> " + edge.getVertex(Direction.IN).getProperty("name")));
-        });
-        queryPhase1Duration = System.currentTimeMillis() - start;
-        System.out.println("Query phase 1 took " + queryPhase1Duration + "ms");
+        long start;
+        Iterable<Vertex> vertices = null;
+        if (runPhase1) {
+            // QUERY 1
+            start = System.currentTimeMillis();
+            vertices = graph.getVertices();
+            vertices.forEach((vertex) -> {
+                System.out.println("\nNode " + vertex.getProperty("name"));
+                Iterable<Edge> edges = vertex.getEdges(Direction.OUT);
+                System.out.println("out edges:");
+                edges.forEach((edge) -> System.out.println("--" + edge.getLabel() + "--> " + edge.getVertex(Direction.IN).getProperty("name")));
+            });
+            queryPhase1Duration = System.currentTimeMillis() - start;
+            System.out.println("Query phase 1 took " + queryPhase1Duration + "ms");
+        }
 
 
         // QUERY 2
@@ -118,12 +123,16 @@ public class RandomGraphDemo {
         }
 
         System.out.println("\n****************\ntimes taken (n = " + verticesNumber+  ", p =" + edgeProbability +"):\n****************");
-        initPhaseDuration = Math.max(0, initPhaseDuration);
-        deletingDuration = Math.max(0, deletingDuration);
-        System.out.println(initPhaseDuration + "ms for creating the graph");
-        System.out.println(queryPhase1Duration + "ms for querying the graph");
+        if (initPhaseDuration != -1) {
+            System.out.println(initPhaseDuration + "ms for creating the graph");
+        }
+        if (queryPhase1Duration != -1) {
+            System.out.println(queryPhase1Duration + "ms for querying the graph");
+        }
         System.out.println(queryPhase2Duration + "ms for querying (without System.out.println) the graph");
-        System.out.println(deletingDuration + "ms for deleting the graph");
+        if (deletingDuration != -1) {
+            System.out.println(deletingDuration + "ms for deleting the graph");
+        }
     }
 
     public static void main(String[] args) {
