@@ -21,7 +21,9 @@ public class Main {
                     SimpleGraphDemo.main(args);
                     break;
                 case 2:
-                    RandomGraphDemo.main(args);
+                    new RandomGraphDemo().run(args, true);
+                case 3:
+                    new RandomTreeDemo().run(args, true);
                     break;
             }
         } catch (IllegalArgumentException ex) {

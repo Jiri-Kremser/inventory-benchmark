@@ -2,10 +2,13 @@ package org.rhq;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import com.thinkaurelius.titan.graphdb.database.management.ManagementSystem;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.id.IdGraph;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 
@@ -32,10 +35,11 @@ public class RandomGraphDemo {
             "simms", "stingy", "steeve", "sister", "sesame", "slyly", "strake", "sudra", "scotus", "surra", "shoji", "sabean", "sikh", "secam",
             "satay", "salpa", "swan", "spigot", "sayid", "shout", "stodge", "swart"};
 
-    public static void main(String[] args) {
+    private TitanGraph graph;
+
+    public void run(String[] args, boolean remove) {
         long initPhaseDuration = -1, queryPhase1Duration = -1, queryPhase2Duration = -1, deletingDuration = -1;
 
-        boolean remove = true;
         int verticesNumber = 10000;
         float edgeProbability = (float) (2.0f*Math.log(verticesNumber)/(float)verticesNumber);
         long seed = new Random().nextLong();
@@ -56,7 +60,14 @@ public class RandomGraphDemo {
         Configuration conf = new BaseConfiguration();
         conf.setProperty("storage.backend", "cassandra");
         conf.setProperty("storage.hostname", "127.0.0.1");
-        TitanGraph graph = TitanFactory.open(conf);
+        TitanGraph base = TitanFactory.open(conf);
+//        TitanManagement mgmt = base.getManagementSystem();
+//        mgmt.makePropertyKey("_id").dataType(String.class);
+//        mgmt.buildIndex("byId", Vertex.class);
+//        mgmt.commit();
+
+//        IdGraph graph = new IdGraph(base, true, false);
+        this.graph = base;
         boolean initialized = graph.getVertices("name", MARKER).iterator().hasNext();
         // INIT
         if (!initialized) {
@@ -99,12 +110,12 @@ public class RandomGraphDemo {
         if (remove) {
             System.out.println("\n****************\nremoving the graph");
             start = System.currentTimeMillis();
-            removeGraph(graph);
+            removeGraph();
             graph.commit();
             deletingDuration = System.currentTimeMillis() - start;
             System.out.println("Removing took " + deletingDuration + "ms");
+            graph.shutdown();
         }
-        graph.shutdown();
 
         System.out.println("\n****************\ntimes taken (n = " + verticesNumber+  ", p =" + edgeProbability +"):\n****************");
         initPhaseDuration = Math.max(0, initPhaseDuration);
@@ -115,7 +126,12 @@ public class RandomGraphDemo {
         System.out.println(deletingDuration + "ms for deleting the graph");
     }
 
-    public static void setupGraph(Graph graph, final int verticesNumber, final float edgeProbability, final long seed) {
+    public static void main(String[] args) {
+        RandomGraphDemo demo = new RandomGraphDemo();
+        demo.run(args, true);
+    }
+
+    public void setupGraph(Graph graph, final int verticesNumber, final float edgeProbability, final long seed) {
         // vertices
         Vertex[] vertices = new Vertex[verticesNumber];
         Random rand = new Random(seed);
@@ -129,14 +145,20 @@ public class RandomGraphDemo {
                 // j < i -> no self loops
                 if (rand.nextFloat() < edgeProbability) {
                     // we are lucky
-                    graph.addEdge(i + "#" + j, vertex, vertices[j], RANDOM_WORDS[rand.nextInt(RANDOM_WORDS.length)]);
+                    graph.addEdge(i + "#" + j, vertices[j], vertex, RANDOM_WORDS[rand.nextInt(RANDOM_WORDS.length)]);
                 }
             }
         }
     }
 
-    public static void removeGraph(Graph graph) {
-        Iterable<Vertex> vertices = graph.getVertices();
-        vertices.forEach((vertex) -> vertex.remove());
+    public void removeGraph() {
+        if (graph != null) {
+            Iterable<Vertex> vertices = graph.getVertices();
+            vertices.forEach((vertex) -> vertex.remove());
+        }
+    }
+
+    public TitanGraph getGraph() {
+        return graph;
     }
 }
