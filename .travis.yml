@@ -5,5 +5,7 @@ jdk:
 
 install: mvn clean install
 
+script: bash runDemos.sh
+
 notifications:
   email: false
