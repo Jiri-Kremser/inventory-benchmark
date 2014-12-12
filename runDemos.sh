@@ -26,7 +26,7 @@ filterOutput() {
 installTitan() {
   if [[ ! -d ./target/$_TITAN_VERSION ]]; then
     echo "Titan is not installed, installing Titan + C*..."
-    wget http://s3.thinkaurelius.com/downloads/titan/$_TITAN_VERSION.zip -P /tmp/ && unzip -d ./target/ /tmp/$_TITAN_VERSION.zip # |& filterOutput
+    wget --quiet http://s3.thinkaurelius.com/downloads/titan/$_TITAN_VERSION.zip -P /tmp/ && unzip -q -d ./target/ /tmp/$_TITAN_VERSION.zip # |& filterOutput
   fi
 }
 
