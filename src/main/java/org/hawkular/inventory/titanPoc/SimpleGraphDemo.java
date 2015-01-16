@@ -1,4 +1,4 @@
-package org.rhq;
+package org.hawkular.inventory.titanPoc;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.openjdk.jmh.annotations.Benchmark;
 
 /**
  * Created by jkremser on 12/4/14.
@@ -42,6 +43,12 @@ public class SimpleGraphDemo {
             graph.commit();
         }
         graph.shutdown();
+    }
+
+    @Benchmark
+    public void test() {
+        int four = 2+2;
+        assert four == 4;
     }
 
     public static void setupGraph(Graph graph) {

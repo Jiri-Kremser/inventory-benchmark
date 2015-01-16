@@ -1,4 +1,4 @@
-package org.rhq;
+package org.hawkular.inventory.titanPoc;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;

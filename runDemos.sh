@@ -37,11 +37,11 @@ startCassandra() {
 }
 
 runDemos() {
-  for demo in SimpleGraphDemo RandomGraphDemo RandomTreeDemo
-  do
-    echo -e "\n\n\nrunning demo $demo ...\n"
-    java -cp ./target/titan-poc-$_THIS_VERSION-jar-with-dependencies.jar org.rhq.$demo |& filterOutput
-  done
+#  for demo in SimpleGraphDemo RandomGraphDemo RandomTreeDemo
+#  do
+#    echo -e "\n\n\nrunning demo $demo ...\n"
+    java -cp ./target/titan-benchmarks.jar -wi 5 -bs 5 -i5 -f3 |& filterOutput
+#  done
   echo -e "'\n\n*******\n\e[92mSUCCESS\e[0m\n*******\n"
 }
 

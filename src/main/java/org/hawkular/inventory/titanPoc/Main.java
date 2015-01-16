@@ -1,4 +1,4 @@
-package org.rhq;
+package org.hawkular.inventory.titanPoc;
 
 import java.util.Scanner;
 
