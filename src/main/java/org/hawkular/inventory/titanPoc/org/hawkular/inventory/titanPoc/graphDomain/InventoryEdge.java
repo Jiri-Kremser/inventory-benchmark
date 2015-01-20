@@ -10,5 +10,8 @@ public interface InventoryEdge<T extends InventoryNode> {
 
     String label();
 
-    String property(String key);
+    String getProperty(String key);
+
+    void setProperty(String key, String property);
+
 }

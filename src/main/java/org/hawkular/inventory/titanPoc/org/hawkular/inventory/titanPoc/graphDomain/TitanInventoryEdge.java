@@ -25,8 +25,13 @@ public class TitanInventoryEdge implements InventoryEdge<TitanInventoryNode> {
     }
 
     @Override
-    public String property(String key) {
+    public String getProperty(String key) {
         return edge.getProperty(key);
+    }
+
+    @Override
+    public void setProperty(String key, String property) {
+        edge.setProperty(key, property);
     }
 
     public Edge getEdge() {
@@ -35,5 +40,6 @@ public class TitanInventoryEdge implements InventoryEdge<TitanInventoryNode> {
 
     public TitanInventoryEdge(Edge edge) {
         this.edge = edge;
+        edge.getPropertyKeys().forEach(key -> setProperty(key, edge.getProperty(key)));
     }
 }

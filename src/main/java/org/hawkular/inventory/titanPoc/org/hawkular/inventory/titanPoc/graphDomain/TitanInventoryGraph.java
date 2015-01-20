@@ -3,6 +3,8 @@ package org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDom
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,13 +37,20 @@ public class TitanInventoryGraph implements InventoryGraph<TitanInventoryNode> {
     }
 
     @Override
-    public void addNode(TitanInventoryNode node) {
-        Vertex newNode = graph.addVertex();
-        node.getPropertyKeys().forEach(key -> newNode.setProperty(key, node.getProperty(key)));
+    public TitanInventoryNode addNode(String label) {
+        Vertex newNode = graph.addVertex(label);
+        return new TitanInventoryNode(newNode);
     }
 
     @Override
-    public void addEdge(TitanInventoryNode source, TitanInventoryNode target, String label) {
-        graph.addEdge(null, source.getNode(), target.getNode(), label);
+    public TitanInventoryEdge addEdge(TitanInventoryNode source, TitanInventoryNode target, String label) {
+        return new TitanInventoryEdge(graph.addEdge(null, source.getNode(), target.getNode(), label));
+    }
+
+    public TitanInventoryGraph(TitanGraph graph) {
+        this.graph = graph;
+    }
+
+    public TitanInventoryGraph() {
     }
 }

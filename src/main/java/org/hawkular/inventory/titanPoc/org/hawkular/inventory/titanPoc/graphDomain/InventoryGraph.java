@@ -9,6 +9,6 @@ public interface InventoryGraph<T extends InventoryNode> {
     List<T> nodes();
     List<? extends InventoryEdge<T>> edges();
     String label();
-    void addNode(T node);
-    void addEdge(T source, T target, String label);
+    T addNode(String label);
+    InventoryEdge<T> addEdge(T source, T target, String label);
 }

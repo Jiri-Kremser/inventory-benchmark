@@ -6,17 +6,16 @@ import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDoma
  * Created by jkremser on 1/19/15.
  */
 public abstract class AbstractGraphBenchmark<T extends InventoryGraph> {
-    abstract protected T setupGraph();
-    abstract protected void cleanGraph(T graph);
-    abstract protected void run(T graph);
+    abstract void setupGraph();
+    abstract void cleanGraph();
+    abstract void run();
 
     public void start() {
-        T graph = null;
         try {
-            graph = setupGraph();
-            run(graph);
+            setupGraph();
+            run();
         } finally {
-            cleanGraph(graph);
+            cleanGraph();
         }
     }
 }

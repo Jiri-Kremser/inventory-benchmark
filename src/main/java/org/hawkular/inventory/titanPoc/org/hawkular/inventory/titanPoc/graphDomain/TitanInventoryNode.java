@@ -37,5 +37,6 @@ public class TitanInventoryNode implements InventoryNode {
 
     public TitanInventoryNode(Vertex node) {
         this.node = node;
+        node.getPropertyKeys().forEach(key -> setProperty(key, node.getProperty(key)));
     }
 }

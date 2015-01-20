@@ -9,6 +9,12 @@ import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 /**
  * Created by jkremser on 12/4/14.
@@ -45,10 +51,17 @@ public class SimpleGraphDemo {
         graph.shutdown();
     }
 
-    @Benchmark
-    public void test() {
-        int four = 2+2;
-        assert four == 4;
+//    @Benchmark
+//    @BenchmarkMode({Mode.Throughput})
+    public void test1() throws Exception {
+        Constructor<ArrayList> constructor = ArrayList.class.getDeclaredConstructor(int.class);
+        constructor.newInstance(42);
+    }
+
+//    @Benchmark
+//    @BenchmarkMode(Mode.Throughput)
+    public void test2() throws Exception {
+        new ArrayList(42);
     }
 
     public static void setupGraph(Graph graph) {
