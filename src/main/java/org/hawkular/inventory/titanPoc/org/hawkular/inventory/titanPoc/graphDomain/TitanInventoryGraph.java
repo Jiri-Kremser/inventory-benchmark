@@ -51,6 +51,7 @@ public class TitanInventoryGraph implements InventoryGraph<TitanInventoryNode> {
         this.graph = graph;
     }
 
-    public TitanInventoryGraph() {
+    public TitanGraph getGraph() {
+        return graph;
     }
 }

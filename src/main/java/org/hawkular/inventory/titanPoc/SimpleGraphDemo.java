@@ -51,19 +51,6 @@ public class SimpleGraphDemo {
         graph.shutdown();
     }
 
-//    @Benchmark
-//    @BenchmarkMode({Mode.Throughput})
-    public void test1() throws Exception {
-        Constructor<ArrayList> constructor = ArrayList.class.getDeclaredConstructor(int.class);
-        constructor.newInstance(42);
-    }
-
-//    @Benchmark
-//    @BenchmarkMode(Mode.Throughput)
-    public void test2() throws Exception {
-        new ArrayList(42);
-    }
-
     public static void setupGraph(Graph graph) {
         // vertices
         Vertex host = graph.addVertex("host");
