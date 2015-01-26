@@ -1,7 +1,10 @@
 package org.hawkular.inventory.titanPoc;
 
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import org.apache.commons.configuration.Configuration;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryEdge;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryNode;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -12,6 +15,7 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -25,7 +29,13 @@ import java.util.stream.StreamSupport;
 @Measurement(iterations = 3, time = 100, timeUnit = TimeUnit.MILLISECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.SingleShotTime)
-public class SimpleTitanGraphBenchmark extends AbstractTitanGraphBenchmark {
+public class SimpleTitanGraphIndexedBenchmark extends AbstractTitanGraphBenchmark {
+
+    @Override
+    protected TitanGraph getGraph() {
+        System.out.println("HOOOOOOOO  " + new File(".").getAbsoluteFile());
+        return TitanFactory.open("target/classes/org/hawkular/inventory/titanPoc/graph1.txt");
+    }
 
     @Override
     protected void run() {

@@ -5,11 +5,13 @@ import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.codehaus.groovy.runtime.powerassert.SourceText;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryEdge;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryGraph;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryNode;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 import java.util.List;
 
@@ -28,15 +30,16 @@ public abstract class AbstractTitanGraphBenchmark extends AbstractGraphBenchmark
     @Override
     public void setupGraph() {
         System.out.println("setup...");
-        Configuration conf = getConfiguration();
-        TitanGraph graph = TitanFactory.open(conf);
+        TitanGraph graph = getGraph();
         TitanInventoryGraph inventoryGraph = new TitanInventoryGraph(graph);
-
         boolean initialized = graph.getVertices("name", MARKER).iterator().hasNext();
         if (!initialized) {
+            System.out.println("initializing graph...");
             Vertex vertex = graph.addVertex(MARKER);
             vertex.setProperty("name", MARKER);
             insertSimpleInventory(inventoryGraph);
+        } else {
+            System.out.println("graph already initialized");
         }
         this.inventoryGraph = inventoryGraph;
     }
@@ -177,11 +180,11 @@ public abstract class AbstractTitanGraphBenchmark extends AbstractGraphBenchmark
         e.setProperty("till", "2014-12-03");
     }
 
-    protected Configuration getConfiguration() {
+    protected TitanGraph getGraph() {
         Configuration conf = new BaseConfiguration();
         conf.setProperty("storage.backend", "cassandra");
         conf.setProperty("storage.hostname", "127.0.0.1");
-        return conf;
+        return TitanFactory.open(conf);
     }
 
     enum GraphStructure {
