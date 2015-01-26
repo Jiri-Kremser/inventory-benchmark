@@ -2,6 +2,11 @@ package org.hawkular.inventory.titanPoc;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.groovy.Gremlin;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.Pipe;
+import com.tinkerpop.pipes.util.iterators.SingleIterator;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryEdge;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryGraph;
 import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryNode;
@@ -88,11 +93,6 @@ public class SimpleTitanGraphBenchmark extends AbstractTitanGraphBenchmark {
     }
 
     @Benchmark
-    public void testBasicBlueprintsApiGraphQuerying() {
-        StreamSupport.stream(getInventoryGraph().getGraph().query().has("name", "RHQ Metrics DS").vertices().spliterator(), false).findFirst().ifPresent(System.out::println);
-    }
-
-    @Benchmark
     public String testBasicBlueprintsApiForAllEdgesAddTheReverseOne() {
         // we need to use/return the result of computation to avoid dead code elimination
         final StringBuilder sb = new StringBuilder();
@@ -111,6 +111,33 @@ public class SimpleTitanGraphBenchmark extends AbstractTitanGraphBenchmark {
         System.out.println(reversedRelations);
         return sb.toString();
     }
+
+    @Benchmark
+    public void testBasicBlueprintsApiGraphQuerying() {
+        StreamSupport.stream(getInventoryGraph().getGraph().query().has("name", "RHQ Metrics DS").vertices().spliterator(), false).findFirst().ifPresent(System.out::println);
+    }
+
+
+    @Benchmark
+    public void testBGremlin1() {
+        Pipe pipe = Gremlin.compile("_().out('knows').name");
+        pipe.setStarts(new SingleIterator<Vertex>(getInventoryGraph().getGraph().getVertex(1)));
+        for(Object name : pipe) {
+            System.out.println((String) name);
+        }
+    }
+
+    @Benchmark
+    public void testBGremlin2() {
+        Pipe pipe = new GremlinPipeline<Vertex, Vertex>(getInventoryGraph().getGraph().getVertices())
+                .as("node").out("isDeployedOn").has("name", "wildfly").back("node").cast(Vertex.class);
+        for(Object name : pipe) {
+            System.out.println((String) name);
+        }
+    }
+
+
+
 
     @Override
     public void insertSimpleInventory(TitanInventoryGraph inventoryGraph) {
