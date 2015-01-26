@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _TITAN_VERSION="titan-all-0.4.4"
-_THIS_VERSION="1.0-SNAPSHOT"
+_THIS_VERSION="0.1-SNAPSHOT"
 
 
 
@@ -36,12 +36,14 @@ startCassandra() {
   sleep 60
 }
 
-runDemos() {
+runBenchmarks() {
 #  for demo in SimpleGraphDemo RandomGraphDemo RandomTreeDemo
 #  do
 #    echo -e "\n\n\nrunning demo $demo ...\n"
 echo "Running benchmark..."
-    java -jar ./target/titan-benchmarks.jar |& filterOutput
+    JARS=`find $PWD/target/lib/ | tr '\n' ':'`
+    echo $JARS
+    java -cp "$PWD/target/hawkular-inventory-titan-poc-$_THIS_VERSION.jar:$JARS" org.openjdk.jmh.Main $@ |& filterOutput
 #  done
   echo -e "'\n\n*******\n\e[92mSUCCESS\e[0m\n*******\n"
 }
@@ -57,7 +59,7 @@ main() {
   set -f
   installTitan
   startCassandra
-  runDemos
+  runBenchmarks $@
 }
 
-main
+main $@
