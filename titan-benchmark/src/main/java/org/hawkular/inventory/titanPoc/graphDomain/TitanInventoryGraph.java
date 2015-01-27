@@ -1,10 +1,8 @@
-package org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain;
+package org.hawkular.inventory.titanPoc.graphDomain;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmh.version>1.4.2</jmh.version>
+        <sramp.version>0.8.0-SNAPSHOT</sramp.version>
         <uberjar.name>inventory-artificer-benchmark</uberjar.name>
     </properties>
 
@@ -30,6 +31,30 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>${jmh.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.overlord.sramp</groupId>
+            <artifactId>s-ramp-server-api</artifactId>
+            <version>${sramp.version}</version>
+        </dependency>
+<!--        <dependency>
+            <groupId>org.overlord.sramp</groupId>
+            <artifactId>s-ramp-api</artifactId>
+            <version>${sramp.version}</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-ejb-client-bom</artifactId>
+            <version>8.2.0.Final</version>
+            <type>pom</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>

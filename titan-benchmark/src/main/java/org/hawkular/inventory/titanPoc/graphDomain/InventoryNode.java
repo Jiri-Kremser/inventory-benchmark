@@ -1,4 +1,4 @@
-package org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain;
+package org.hawkular.inventory.titanPoc.graphDomain;
 
 import java.util.Set;
 
