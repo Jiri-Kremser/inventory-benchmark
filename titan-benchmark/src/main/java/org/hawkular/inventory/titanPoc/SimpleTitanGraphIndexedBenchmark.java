@@ -33,7 +33,6 @@ public class SimpleTitanGraphIndexedBenchmark extends AbstractTitanGraphBenchmar
 
     @Override
     protected TitanGraph getGraph() {
-        System.out.println("HOOOOOOOO  " + new File(".").getAbsoluteFile());
         return TitanFactory.open("target/classes/org/hawkular/inventory/titanPoc/graph1.txt");
     }
 
