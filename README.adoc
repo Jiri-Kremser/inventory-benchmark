@@ -2,7 +2,7 @@
 
 == Titan + C* poc
 
-image:https://travis-ci.org/Jiri-Kremser/rhq-titan-poc.svg?branch=master["Build Status", link="https://travis-ci.org/Jiri-Kremser/rhq-titan-poc"]
+image:https://travis-ci.org/Jiri-Kremser/inventory-benchmark.svg?branch=master["Build Status", link="https://travis-ci.org/Jiri-Kremser/inventory-benchmark"]
 
 
 Here are some results I measured on my laptop:
