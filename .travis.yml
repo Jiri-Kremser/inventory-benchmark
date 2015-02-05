@@ -3,7 +3,12 @@ language: java
 jdk:
   - oraclejdk8
 
-install: mvn clean -DskipTests install
+install:
+- git clone --depth=1 https://github.com/ArtificerRepo/artificer.git /tmp
+- pushd /tmp/artificer
+- mvn clean -DskipTests install
+- popd
+- mvn clean -DskipTests install
 
 script: 
 - cd titan-benchmark
