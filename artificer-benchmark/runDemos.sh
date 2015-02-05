@@ -32,9 +32,9 @@ installWildfly() {
 }
 
 buildArtificer() {
-  git clone --depth=1 https://github.com/ArtificerRepo/artificer.git /tmp
+  #git clone --depth=1 https://github.com/ArtificerRepo/artificer.git /tmp/artificer
   pushd /tmp/artificer
-  mvn clean -DskipTests install
+  #mvn clean -DskipTests install
   cd s-ramp-distro/assembly/target/
   unzip s-ramp-0.8.0-SNAPSHOT.zip
   cd s-ramp-0.8.0-SNAPSHOT
