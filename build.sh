@@ -13,19 +13,21 @@ filterOutput() {
 }
 
 buildArtificer() {
+  FOO=$PWD
   git clone --quiet --depth=1 https://github.com/ArtificerRepo/artificer.git /tmp/artificer
   pushd /tmp/artificer
-  mvn clean -DskipTests install |& filterOutput
+  mvn -s $FOO/.travis.maven.settings.xml -DskipTests install |& filterOutput
   popd
 }
 
 buildThis() {
-  mvn clean -DskipTests install |& filterOutput
+  mvn -s .travis.maven.settings.xml -DskipTests install |& filterOutput
 }
 
 main() {
   local excludeRegex=$(mkRegex \
     ' KB' \
+    '\[INFO\]' \
     'Downloading\: http' \
     'Downloaded\: http'
   )
