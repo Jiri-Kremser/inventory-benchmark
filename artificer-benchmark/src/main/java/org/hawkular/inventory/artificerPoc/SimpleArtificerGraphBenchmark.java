@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by jkremser on 1/21/15.
  */
-@Fork(2)
-@Warmup(iterations = 1, time = 100, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 3, time = 100, timeUnit = TimeUnit.MILLISECONDS)
+@Fork(1)
+@Warmup(iterations = 0, time = 100, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 1, time = 100, timeUnit = TimeUnit.MILLISECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.SingleShotTime)
 public class SimpleArtificerGraphBenchmark extends AbstractArtificerBenchmark {
@@ -28,7 +28,7 @@ public class SimpleArtificerGraphBenchmark extends AbstractArtificerBenchmark {
 //        testBasicBlueprintsApi();
 //        testBasicBlueprintsApiForAllNodesFindSomethingComplex();
 //        testBasicBlueprintsApiGraphQuerying();
-//        testBasicBlueprintsApiForAllEdgesAddTheReverseOne();
+//        testBasicBlueprintsApiForAllEdgesAddTheReAbstractTitanGraphBenchmarkverseOne();
     }
 
     @Benchmark

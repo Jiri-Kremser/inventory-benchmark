@@ -2,12 +2,20 @@ package org.hawkular.inventory.artificerPoc;
 
 import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.BaseArtifactEnum;
 import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.BaseArtifactType;
+import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.DerivedArtifactType;
 import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.ExtendedArtifactType;
 import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.Relationship;
+import org.oasis_open.docs.s_ramp.ns.s_ramp_v1.StoredQuery;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.overlord.sramp.atom.err.SrampAtomException;
+import org.overlord.sramp.client.SrampAtomApiClient;
+import org.overlord.sramp.client.SrampClientException;
+import org.overlord.sramp.client.ontology.OntologySummary;
+import org.overlord.sramp.client.query.ArtifactSummary;
+import org.overlord.sramp.client.query.QueryResultSet;
 import org.overlord.sramp.common.ArtifactType;
 import org.overlord.sramp.common.SrampModelUtils;
 import org.overlord.sramp.server.core.api.ArtifactService;
@@ -17,6 +25,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Created by jkremser on 02/04/15.
@@ -75,15 +84,93 @@ public abstract class AbstractArtificerBenchmark {
         return addEdge(source, target, label, DEFAULT_ARTIFACT_TYPE);
     }
 
-    @TearDown
+//    @TearDown
     public void cleanGraph() throws Exception {
         System.out.println("teardown...");
+        cleanGraphUsingAtomClient();
+//        cleanGraphUsingEJB();
+    }
+
+    private void cleanGraphUsingEJB() throws Exception {
         queryService.login("artificer", "artificer1!");
         List<BaseArtifactType> artifactTypes = queryService.query("/s-ramp/ext/" + DEFAULT_ARTIFACT_TYPE);
-        for (BaseArtifactType type : artifactTypes) {
-            artifactService.delete(ArtifactType.valueOf(type), type.getUuid());
+        for (BaseArtifactType artifact : artifactTypes) {
+            if (!artifact.getRelationship().isEmpty() || !artifact.getProperty().isEmpty() || !artifact.getClassifiedBy().isEmpty()) {
+                artifact.getRelationship().clear();
+                artifact.getProperty().clear();
+                artifact.getClassifiedBy().clear();
+                try {
+                    artifactService.updateMetaData(artifact);
+                } catch (Exception e) {
+                    System.err.println("FAILED1 to delete: " + artifact.getName() + " uuid: " + artifact.getUuid());
+                    System.err.println("edges: " + artifact.getRelationship());
+                    throw e;
+                }
+            }
+            try {
+                if (!(artifact instanceof DerivedArtifactType))
+                    artifactService.delete(ArtifactType.valueOf(artifact), artifact.getUuid());
+            } catch (Exception e) {
+                // this is failing with org.overlord.sramp.repository.error.RelationshipConstraintException: c3280da4-f76a-47db-883f-49213d3f19b1 cannot be updated/deleted, as it or its derived artifacts are targeted by modeled/generic relationships
+                System.err.println("FAILED2 to delete: " + artifact.getName() + " uuid: " + artifact.getUuid());
+                System.err.println("type: " + artifact.getArtifactType());
+                System.err.println("edges: " + artifact.getRelationship());
+                System.err.println("edge types: " + artifact.getRelationship().stream().map(Relationship::getRelationshipType).collect(Collectors.toList()));
+                throw e;
+            }
+        }
+    }
+
+    private void cleanGraphUsingAtomClient() throws Exception { // delete all artifacts
+        try {
+            SrampAtomApiClient client = client();
+            // Rather than mess with pagination, just set the count to something sufficiently large.
+            QueryResultSet results = client.query("/s-ramp/ext/" + DEFAULT_ARTIFACT_TYPE, 0, 10000, "name", true);
+            for (ArtifactSummary summary : results) {
+//                String uuid = summary.getUuid().replace("urn:uuid:", "");
+                // First, need to clear the relationships, custom properties, and classifiers to prevent
+                // constraint Exceptions.  Note that modeled relationships must be manually cleared by tests!
+                BaseArtifactType artifact = client.getArtifactMetaData(summary.getUuid());
+                // This is expensive, so prevent it if possible.
+                if (artifact.getRelationship().size() > 0 || artifact.getProperty().size() > 0 || artifact.getClassifiedBy().size() > 0) {
+                    artifact.getRelationship().clear();
+                    artifact.getProperty().clear();
+                    artifact.getClassifiedBy().clear();
+                    client.updateArtifactMetaData(artifact);
+                }
+            }
+            for (ArtifactSummary summary : results) {
+//                String uuid = summary.getUuid().replace("urn:uuid:", "");
+                if (!summary.isDerived()) {
+                    client.deleteArtifact(summary.getUuid(), summary.getType());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        // delete all stored queries
+        try {
+            SrampAtomApiClient client = client();
+            List<StoredQuery> storedQueries = client.getStoredQueries();
+            for (StoredQuery storedQuery : storedQueries) {
+                client.deleteStoredQuery(storedQuery.getQueryName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // delete all ontologies
+        try {
+            SrampAtomApiClient client = client();
+            List<OntologySummary> ontologies = client.getOntologies();
+            for (OntologySummary ontology : ontologies) {
+                String uuid = ontology.getUuid().replace("urn:uuid:", "");
+                client.deleteOntology(uuid);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void insertSimpleInventory() throws Exception {
@@ -174,8 +261,8 @@ public abstract class AbstractArtificerBenchmark {
         addEdge(rhqMetrics1, rhqMetricsDS1, "uses2");
         addEdge(rhqMetrics2, rhqMetricsDS2, "uses2");
 
-        addEdge(rhqMetricsDS1, db, "requires");
-        addEdge(rhqMetricsDS2, db, "requires");
+        addEdge(rhqMetricsDS1, db, "requires2");
+        addEdge(rhqMetricsDS2, db, "requires2");
 
         addEdge(rhqMetricsApp, rhqMetrics1, "consistOf");
         addEdge(rhqMetricsApp, rhqMetrics2, "consistOf");
@@ -193,5 +280,11 @@ public abstract class AbstractArtificerBenchmark {
 
     public QueryService getQueryService() {
         return queryService;
+    }
+
+    private SrampAtomApiClient client() throws SrampAtomException, SrampClientException {
+        // throws .. Caused by: org.jboss.resteasy.client.ClientResponseFailure: Unable to find a MessageBodyReader of content-type application/atom+xml and type null ... SrampAtomApiClient.java:209
+        // perhaps keycloak?
+        return new SrampAtomApiClient("http://localhost:8080/s-ramp-server", "admin", "artificer1!", true);
     }
 }

@@ -1,6 +1,6 @@
 package org.hawkular.inventory.titanPoc;
 
-import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.InventoryGraph;
+import org.hawkular.inventory.titanPoc.graphDomain.InventoryGraph;
 
 /**
  * Created by jkremser on 1/19/15.

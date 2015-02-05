@@ -5,7 +5,11 @@ jdk:
 
 install: mvn clean install
 
-script: bash runDemos.sh
+script: 
+- cd titan-benchmark
+- bash runDemos.sh
+#- cd ../artificer-benchmark
+#- bash runDemos.sh
 
 notifications:
   email: false

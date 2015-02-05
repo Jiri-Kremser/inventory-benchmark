@@ -2,8 +2,8 @@ package org.hawkular.inventory.titanPoc;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
-import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryEdge;
-import org.hawkular.inventory.titanPoc.org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryNode;
+import org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryEdge;
+import org.hawkular.inventory.titanPoc.graphDomain.TitanInventoryNode;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
