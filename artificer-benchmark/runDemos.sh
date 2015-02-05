@@ -27,7 +27,7 @@ filterOutput() {
 installWildfly() {
   if [[ ! -d ./target/$_WILDFLY_VERSION ]]; then
     echo "Titan is not installed, installing Titan + C*..."
-    wget --quiet http://download.jboss.org/wildfly/$_WILDFLY_VERSION/$_WILDFLY_NAME.zip -P /tmp/ && unzip -q -d ./target/ /tmp/$__WILDFLY_NAME.zip # |& filterOutput
+    wget --quiet http://download.jboss.org/wildfly/$_WILDFLY_VERSION/$_WILDFLY_NAME.zip -P /tmp/ && unzip -q -d ./target/ /tmp/$_WILDFLY_NAME.zip # |& filterOutput
   fi
 }
 
@@ -38,7 +38,7 @@ buildArtificer() {
   cd s-ramp-distro/assembly/target/
   unzip s-ramp-0.8.0-SNAPSHOT.zip
   cd s-ramp-0.8.0-SNAPSHOT
-  #ant install-jboss-wildfly-8-wrapper install the artificer without user interaction ?
+  ant -Dejb-jms.password=artificer1! -Ds-ramp-distro.choices.platform.jboss-wildfly-8=true -Ds-ramp-distro.choices.platform.jboss-wildfly-8.path=/tmp/$_WILDFLY_NAME install-jboss-wildfly-8-wrapper
   popd
 }
 
