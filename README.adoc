@@ -45,3 +45,6 @@ Deleting the graph:
 
 * 36974ms
 * 36632ms
+
+== Benchmark run by Travis
+https://travis-ci.org/Jiri-Kremser/inventory-benchmark[here]
