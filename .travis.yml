@@ -6,8 +6,10 @@ jdk:
 install:
 - git clone --depth=1 https://github.com/ArtificerRepo/artificer.git /tmp/artificer
 - pushd /tmp/artificer
+- jdk_switcher use oraclejdk7
 - mvn clean -DskipTests install
 - popd
+- jdk_switcher use oraclejdk8
 - mvn clean -DskipTests install
 
 script: 
